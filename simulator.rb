@@ -5,7 +5,7 @@ require_relative 'printer'
 
 # Represents the interface for the simulator
 class Simulator
-  def initialize minimum_transmit_threshold
+  def initialize(minimum_transmit_threshold)
     @threshold = minimum_transmit_threshold
     set_paths
 
