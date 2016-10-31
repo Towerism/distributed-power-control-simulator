@@ -9,7 +9,6 @@ class Graph
   def add_path(transmitter_node, receiver_node, gain)
     return unless get(transmitter_node.id, receiver_node.id).nil?
     path = Path.new transmitter_node, receiver_node, gain
-    @paths.find
     @paths.push(path)
   end
 
