@@ -2,5 +2,8 @@
 
 require_relative 'simulator'
 
-simulator = Simulator.new 25
-simulator.run 10
+threshold = 25
+iterations = 10
+
+simulator = Simulator.new threshold
+simulator.run iterations
