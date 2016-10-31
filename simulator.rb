@@ -6,19 +6,21 @@ require_relative 'printer'
 # Represents the interface for the simulator
 class Simulator
   def initialize(minimum_transmit_threshold)
-    @threshold = minimum_transmit_threshold
+    @threshold = convert_decibels minimum_transmit_threshold
     @printer = Printer.new
     set_nodes
     set_paths
-    @interference_calculator = InterferenceCalculator.new @paths, 10**-10
+    @interference_calculator = InterferenceCalculator.new @paths, 10**-13
+  end
+
+  def convert_decibels(decibels)
+    20 * Math.log10(decibels)
   end
 
   def run(n)
     n.times do
       @printer.time += 1
-
       run_adjustments
-
       puts " "
     end
   end
@@ -26,9 +28,9 @@ class Simulator
   private
 
   def set_nodes
-    @node_a = Node.new :A, 1, @printer
+    @node_a = Node.new :A, 10**-3, @printer
     @node_b = Node.new :B, 0, @printer
-    @node_c = Node.new :C, 1, @printer
+    @node_c = Node.new :C, 10**-3, @printer
     @node_d = Node.new :D, 0, @printer
   end
 
