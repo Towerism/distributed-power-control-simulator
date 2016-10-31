@@ -21,7 +21,7 @@ class Simulator
     n.times do
       @printer.time += 1
       run_adjustments
-      puts " "
+      puts ' '
     end
   end
 
