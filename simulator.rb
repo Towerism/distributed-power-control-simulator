@@ -7,19 +7,32 @@ require_relative 'printer'
 class Simulator
   def initialize(minimum_transmit_threshold)
     @threshold = minimum_transmit_threshold
+    @printer = Printer.new
+    set_nodes
     set_paths
-
     @interference_calculator = InterferenceCalculator.new @paths, 10**-10
   end
 
-  def set_paths
-    @printer = Printer.new
+  def run(n)
+    n.times do
+      @printer.time += 1
 
+      run_adjustments
+
+      puts " "
+    end
+  end
+
+  private
+
+  def set_nodes
     @node_a = Node.new :A, 1, @printer
     @node_b = Node.new :B, 0, @printer
     @node_c = Node.new :C, 1, @printer
     @node_d = Node.new :D, 0, @printer
+  end
 
+  def set_paths
     @paths = Graph.new
     @paths.add_path(@node_a, @node_b, 10**-5)
     @paths.add_path(@node_a, @node_d, 10**-8.2)
@@ -27,16 +40,14 @@ class Simulator
     @paths.add_path(@node_c, @node_d, 10**-6)
   end
 
-  def run(n)
-    n.times do
-      @printer.time += 1
-      interference_for_a = @interference_calculator.calculate_for(@node_a, @node_b)
-      gain_ab = @paths.get(:A, :B).gain
-      @node_a.readjust_power(@threshold, interference_for_a, gain_ab)
-      interference_for_c = @interference_calculator.calculate_for(@node_c, @node_d)
-      gain_cd = @paths.get(:C, :D).gain
-      @node_c.readjust_power(@threshold, interference_for_c, gain_cd)
-      puts " "
-    end
+  def run_adjustments
+    run_adjustment_between(@node_a, @node_b)
+    run_adjustment_between(@node_c, @node_d)
+  end
+
+  def run_adjustment_between(transmitter, receiver)
+    interference = @interference_calculator.calculate_for(transmitter, receiver)
+    gain = @paths.get(transmitter.id, receiver.id).gain
+    transmitter.readjust_power(@threshold, interference, gain)
   end
 end
